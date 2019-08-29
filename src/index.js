@@ -1,7 +1,21 @@
 import * as THREE from 'three';
+
 var camera, scene, renderer;
 var mesh;
 const eblettTexture = require('../textures/eblett.jpg')
+
+var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+var audioElement = document.getElementById('audioElement');
+var audioSrc = audioCtx.createMediaElementSource(audioElement);
+var analyser = audioCtx.createAnalyser();
+
+
+// Bind our analyser to the media element source.
+audioSrc.connect(analyser);
+audioSrc.connect(audioCtx.destination);
+//var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+var frequencyData = new Uint8Array(200);
+
 init();
 animate();
 function init() {
@@ -29,5 +43,12 @@ function animate() {
   requestAnimationFrame( animate );
   mesh.rotation.x += 0.005;
   mesh.rotation.y += 0.01;
+
+  // Copy frequency data to frequencyData array.
+  analyser.getByteFrequencyData(frequencyData);
+  const sum = frequencyData.reduce((total, frData) => total + frData, 0)
+  const scaleFactor = (sum / frequencyData.length) / 256
+  mesh.scale.set(scaleFactor, scaleFactor, scaleFactor)
+  
   renderer.render( scene, camera );
 }
