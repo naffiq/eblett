@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "three": "^0.107.0"
+    "three": "^0.137.0"
   },
   "devDependencies": {
     "gh-pages": "^2.1.1",
